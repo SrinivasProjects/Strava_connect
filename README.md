@@ -70,18 +70,7 @@ ActivitySync is a full-stack web application that allows users to sync and manag
 - **Radix UI**: Accessible component primitives
 - **React Hook Form**: Form state management and validation
 
-## Deployment Strategy
 
-### Development Environment
-- Replit hosting with hot reload
-- Development server runs on port 5000
-- Vite dev server with HMR support
-
-### Production Build
-- Vite builds optimized client bundle
-- esbuild compiles server code
-- Static assets served from Express
-- Single deployment target with autoscale
 
 ### Environment Configuration
 - Database connection via DATABASE_URL
