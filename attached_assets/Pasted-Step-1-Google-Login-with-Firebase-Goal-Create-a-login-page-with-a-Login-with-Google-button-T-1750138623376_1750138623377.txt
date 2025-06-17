@@ -1,0 +1,125 @@
+Step 1: Google Login with Firebase
+Goal: Create a login page with a “Login with Google” button.
+
+✅ Tech Stack:
+Frontend: React
+
+Backend: Node.js + Express (only for non-auth APIs)
+
+Authentication: Firebase Auth
+
+🛠️ Implementation:
+Firebase Setup:
+
+Create a Firebase project.
+
+Enable Google Sign-In under Authentication.
+
+Add Firebase SDK config to React frontend.
+
+React Page:
+
+Create a login page (/login route).
+
+Use Firebase SDK (firebase/auth) to trigger Google sign-in.
+
+On success, redirect user to /dashboard.
+
+Store user info:
+
+Save UID and email to your PostgreSQL database if first-time login (use backend API).
+
+Store token/session for secure routes.
+
+🔹 Step 2: Strava OAuth Integration
+Goal: After first login, show a Connect to Strava button.
+
+✅ Tech Stack:
+OAuth: Strava API
+
+Backend: Node.js + Express (handles the auth exchange)
+
+🛠️ Implementation:
+Strava App Setup:
+
+Register at Strava Developers.
+
+Get client_id, client_secret, and redirect_uri.
+
+React Button:
+
+Add a “Connect to Strava” button on the /dashboard.
+
+Redirect user to Strava OAuth:
+
+bash
+Copy
+Edit
+https://www.strava.com/oauth/authorize?client_id=YOUR_ID&response_type=code&redirect_uri=YOUR_BACKEND/callback&approval_prompt=force&scope=activity:read_all,activity:write
+Backend Exchange Endpoint:
+
+/callback: Get the code from Strava and exchange it for access/refresh tokens.
+
+Save tokens to PostgreSQL against the user.
+
+Only first-time users see the Connect button; returning users go to /activities.
+
+🔹 Step 3: Fetch Strava Activities to a Calendar
+Goal: Display user’s activities on a calendar after syncing from Strava.
+
+✅ Tech Stack:
+Calendar UI: Use FullCalendar (React library)
+
+Backend API: /activities/sync to call Strava API
+
+🛠️ Implementation:
+Default State:
+
+If no activities: show “No activity found” message.
+
+Strava Sync Endpoint:
+
+Use /athlete/activities Strava API with user’s access token.
+
+Save activities in your PostgreSQL activities table with:
+
+sql
+Copy
+Edit
+id, user_id, name, type, start_date, distance, duration, strava_id
+Calendar Frontend:
+
+Fetch /activities and display events on the calendar.
+
+Use event color coding by type (e.g., Run, Ride, Swim).
+
+Add “Manual Sync” button → triggers /activities/sync.
+
+Security:
+
+Only fetch user’s own activities (use user_id from session/Firebase token).
+
+🔹 Step 4: Edit Activity and Sync Back to Strava
+Goal: From your panel, edit an activity and update it on Strava.
+
+✅ Tech Stack:
+Form UI: Modal form to edit name/type/date
+
+Backend API: /activities/:id (PATCH)
+
+🛠️ Implementation:
+Frontend:
+
+Each calendar event is clickable → open edit modal.
+
+Submit updates to backend.
+
+Backend:
+
+Validate user owns the activity.
+
+Call Strava API:
+PUT https://www.strava.com/api/v3/activities/{id}
+with fields like name, type, start_date_local, etc.
+
+Update in PostgreSQL too.
